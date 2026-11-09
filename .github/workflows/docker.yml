@@ -1,0 +1,28 @@
+name: Build Docker Image CI
+
+on:
+  push:
+    branches: [ "main", "master" ]
+  pull_request:
+    branches: [ "main", "master" ]
+
+jobs:
+  build-docker:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository code
+        uses: actions/checkout@v4
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Build Docker Image
+        run: |
+          docker build -t my-automation-app:latest .
+
+      - name: Run Test Container
+        env:
+          REQUIRED_VAR: "docker_ci_value"
+        run: |
+          docker run --rm -e REQUIRED_VAR="$REQUIRED_VAR" my-automation-app:latest
